@@ -17,31 +17,26 @@ const initialState = {
 };
 
 export const reducer = (state = initialState, action) => {
-  console.log('STATE (in reducer): ', state);
-  let index, newAdditionalFeatures, newFeatures, newAdditionalPrice;
+  let index, spliceArray, newAdditionalPrice;
   switch(action.type) {
     case REMOVE_FEATURE:
-      console.log('ACTION (in remove_feature): ', action);
       index = action.payload;
-      newFeatures = [...state.car.features];
-      newFeatures.splice(index, 1);
-      newAdditionalFeatures = [...state.additionalFeatures];
-      newAdditionalFeatures.splice(state.car.features[index].id - 1, 0, state.car.features[index]);
+      spliceArray = [...state.car.features];
+      spliceArray.splice(index, 1);
       newAdditionalPrice = state.additionalPrice - state.car.features[index].price;
       return {
         ...state,
         car: {
           ...state.car,
-          features: newFeatures,
+          features: spliceArray,
         },
-        additionalFeatures: newAdditionalFeatures,
+        additionalFeatures: [...state.additionalFeatures, state.car.features[index]],
         additionalPrice: newAdditionalPrice,
       }
     case BUY_ITEM:
-      console.log('ACTION (in buy_item): ', action);
       index = action.payload;
-      newAdditionalFeatures = [...state.additionalFeatures]
-      newAdditionalFeatures.splice(index, 1);
+      spliceArray = [...state.additionalFeatures]
+      spliceArray.splice(index, 1);
       newAdditionalPrice = state.additionalPrice + state.additionalFeatures[index].price;
       return {
         ...state,
@@ -52,7 +47,7 @@ export const reducer = (state = initialState, action) => {
             state.additionalFeatures[index]
           ]
         },
-        additionalFeatures: newAdditionalFeatures,
+        additionalFeatures: spliceArray,
         additionalPrice: newAdditionalPrice,
       };
     default:
